@@ -3,61 +3,67 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
-books = [
+notes = [
     {
-        "id": 1,
-        "title": "The Guide",
-        "author": "R K Narayan",
-        "genre": "Fiction",
-        "language": "English"
+        "id":1,
+        "title":"FastAPI Intro",
+        "content":"FastAPI is used to build backend APIs in Python.",
+        "category":"Backend",
+        "priority":"High"
     },
     {
-        "id": 2,
-        "title": "Wings of Fire",
-        "author": "A P J Abdul Kalam",
-        "genre": "Biography",
-        "language": "English"
+        "id":2,
+        "title":"Request Body",
+        "content":"A request body carries data sent by the client.",
+        "category":"API",
+        "priority":"Medium"
     }
 ]
 
-
-# Pydantic Model
-class BookCreate(BaseModel):
-    title: str
-    author: str
-    genre: str
-    language: str
+class NoteCreate(BaseModel):
+    title:str
+    content:str
+    category:str
+    priority:str
 
 
 # Home API
 @app.get("/")
 def home():
-    return {"message": "Library API is running"}
+    return {"message": "Notes API is running"}
 
+# Get All notes
+@app.get("/notes")
+def get_notes():
+    return notes
 
-# Get All Books
-@app.get("/books")
-def get_books():
-    return books
+# Post
+@app.post("/notes", status_code=201)
+def create_note(note: NoteCreate):
+    pass
 
+# step10
+@app.post("/notes", status_code=201)
+def create_note(note: NoteCreate):
+    new_id = max([note["id"] for note in notes], default=0) + 1
+    
+# step11
+@app.post("/notes", status_code=201)
+def create_note(note: NoteCreate):
+    new_id = max([note["id"] for note in notes], default=0) + 1
 
-# Add New Book
-@app.post("/books", status_code=201)
-def create_book(book: BookCreate):
-
-    new_id = max([book["id"] for book in books], default=0) + 1
-
-    new_book = {
+    new_note = {
         "id": new_id,
-        "title": book.title,
-        "author": book.author,
-        "genre": book.genre,
-        "language": book.language
+        "title": note.title,
+        "content": note.content,
+        "category": note.category,
+        "priority": note.priority
     }
-
-    books.append(new_book)
-
+    notes.append(new_note)
     return {
-        "message": "Book added successfully",
-        "book": new_book
+        "message": "Note created successfully",
+        "note": new_note
     }
+
+
+  
